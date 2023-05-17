@@ -9,34 +9,12 @@
           v-model="searchValue"
           :id="'search_movie'"
         />
-        <div class="filter-movie">
-          <el-select
-            v-model="typeFilter"
-            class="m-2"
-            placeholder="Select"
-            size="large"
-            @change="loadData"
-          >
-            <el-option
-              v-for="item in filterMovie"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
-            />
-          </el-select>
-        </div>
       </div>
-      <div class="header-right">
-        <base-button
-          :classButton="'button-blue'"
-          :titleButton="$t('Addnew')"
-          @bindEvent="openPopup()"
-        ></base-button>
-      </div>
+      <div class="header-right"></div>
     </div>
     <div class="movie-manage-container">
       <div class="movie-manage-main">
-        <div class="main-empty" v-if="dataSource.length<1">
+        <div class="main-empty" v-if="dataSource.length < 1">
           Không có dữ liệu
         </div>
         <div
@@ -66,75 +44,46 @@
                 class="movie-content"
                 @click="openContent(item.movieName, item.content)"
               >
-                {{ item.movieName }} - {{ item.movieCode }}
+                {{ item.movieName }}
               </div>
               <div class="group-icon">
-                <div
-                  class="icon-trailer"
-                  v-if="!isOpenTrailer(item.movieID)"
-                  @click="openTrailer(item.movieID)"
-                >
-                  <i class="fas fa-film"></i>
-                </div>
-                <div
-                  class="icon-trailer"
-                  v-if="isOpenTrailer(item.movieID)"
-                  @click="openTrailer(item.movieID)"
-                >
-                  <i class="fas fa-times"></i>
-                </div>
-                <div class="icon-context-container">
-                  <div class="icon-trailer" @click="openContext(item.movieID)">
-                    <i
-                      class="fas fa-caret-down"
-                      v-if="!isOpenContext(item.movieID)"
-                    ></i>
-                    <i
-                      class="fas fa-caret-up"
-                      v-if="isOpenContext(item.movieID)"
-                    ></i>
-                  </div>
-                  <div
-                    class="group-icon-down"
-                    v-if="isOpenContext(item.movieID)"
-                  >
-                    <div class="icon-down" @click="getAlterMovie(item.movieID)">
-                      <i class="fas fa-pen"></i>
-                    </div>
-                    <div
-                      class="icon-down"
-                      @click="getRowSelected(item.movieID)"
-                    >
-                      <i class="fas fa-trash-alt"></i>
-                    </div>
-                  </div>
+                <div class="icon-trailer" title="Mua vé">
+                  <i class="fas fa-ticket-alt"></i>
                 </div>
               </div>
             </div>
             <div class="movie-time-line">
-              {{ $t("Timel") }}: {{ item.timeLine }} {{ $t("Min") }}
+              <span class="bold">{{ $t("Timel") }}:</span> {{ item.timeLine }}
+              {{ $t("Min") }}
             </div>
             <div class="movie-from-date">
-              {{ $t("nShowDate") }}: {{ convertDateFormat(item.fromDate) }}
+              <span class="bold">{{ $t("nShowDate") }}:</span>
+              {{ convertDateFormat(item.fromDate) }}
             </div>
             <div class="movie-to-date">
-              {{ $t("nEndDate") }}: {{ convertDateFormat(item.toDate) }}
+              <span class="bold">{{ $t("nEndDate") }}:</span>
+              {{ convertDateFormat(item.toDate) }}
             </div>
             <div class="movie-release-date">
-              {{ $t("Releasedate") }}: {{ convertDateFormat(item.releaseDate) }}
+              <span class="bold">{{ $t("Releasedate") }}:</span>
+              {{ convertDateFormat(item.releaseDate) }}
             </div>
-            <div class="movie-actor">{{ $t("nActor") }}: {{ item.actor }}</div>
+            <div class="movie-actor">
+              <span class="bold">{{ $t("nActor") }}:</span> {{ item.actor }}
+            </div>
             <div class="movie-direction">
-              {{ $t("Director") }}: {{ item.directions }}
+              <span class="bold">{{ $t("Director") }}:</span>
+              {{ item.directions }}
             </div>
             <div class="movie-category" :title="item.categoryName">
-              {{ $t("CategoryMovie") }}: {{ item.categoryName }}
+              <span class="bold">{{ $t("CategoryMovie") }}:</span>
+              {{ item.categoryName }}
             </div>
             <div class="movie-type">
-              {{ $t("TypeMovie") }}: {{ item.typeName }}
+              <span class="bold">{{ $t("TypeMovie") }}:</span>
+              {{ item.typeName }}
             </div>
           </div>
-          <div class="movie-detail"></div>
         </div>
       </div>
     </div>
@@ -361,20 +310,27 @@ export default {
         background: #fff;
         position: relative;
         margin-left: 20px;
-        min-width: 400px;
-        width: 420px;
+        min-width: 500px;
+        width: 500px;
         color: #111;
         display: flex;
-        height: 220px;
+        height: 250px;
         margin-bottom: 10px;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         border-radius: 10px;
         padding: 10px;
         font-size: 13px;
+        .movie-detail {
+          width: 320px;
+          font-size: 14px;
+          .bold {
+            font-weight: 600;
+          }
+        }
         .posterLink {
           display: inline-block;
-          width: 120px;
-          height: 200px;
+          width: 150px;
+          height: 230px;
           object-fit: cover;
           box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
           padding: 3px;
@@ -382,11 +338,12 @@ export default {
         }
 
         .movie-category,
-        .movie-actor {
+        .movie-actor,
+        .movie-direction {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 240px;
+          width: 280px;
         }
 
         .movie-name {
@@ -403,7 +360,7 @@ export default {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            width: 200px;
+            width: 270px;
           }
 
           .group-icon {
@@ -446,6 +403,10 @@ export default {
             color: #fff;
             border-radius: 50%;
             cursor: pointer;
+            transform: scale(1.4);
+            &:hover{
+              opacity: 0.6;
+            }
           }
         }
 

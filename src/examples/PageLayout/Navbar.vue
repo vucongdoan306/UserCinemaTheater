@@ -10,7 +10,7 @@
         to="/"
         v-bind="$attrs"
         :class="isBlur ? 'text-dark' : 'text-white'"
-      >Cinema Manager</router-link>
+      >Cinema</router-link>
       <button
         class="navbar-toggler shadow-none ms-2"
         type="button"

@@ -2,7 +2,7 @@ export var slideitems = [
   {
     name: "Movie Manage",
     icon: "virtual-reality",
-    text: "moviemanage",
+    text: "NowShowing",
   },
   {
     name: "ShowTime Manage",
@@ -15,29 +15,9 @@ export var slideitems = [
     text: "Ticket",
   },
   {
-    name: "ReportAndStatistic",
-    icon: "dashboard",
-    text: "ReportAndStatistic",
-  },
-  {
-    name: "History",
-    icon: "dashboard",
-    text: "History",
-  },
-  {
     name: "Cinema Room",
     icon: "dashboard",
     text: "CinemaRoomManage",
-  },
-  {
-    name: "Account Manage",
-    icon: "dashboard",
-    text: "Account",
-  },
-  {
-    name: "Dictionary",
-    icon: "dashboard",
-    text: "Dictionary",
   },
 ];
 

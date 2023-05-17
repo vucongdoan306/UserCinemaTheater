@@ -64,6 +64,10 @@ export default {
       this.$store.state.isLoggedIn = true;
       this.$store.state.cinemaName = decodedToken.cinemaName;
     }
+
+    if(!localStorage.getItem("dbname")){
+      localStorage.setItem("dbname","db_cinema_dev_01");
+    }
   },
   computed: {
     navClasses() {

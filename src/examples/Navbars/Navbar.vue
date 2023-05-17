@@ -12,21 +12,27 @@
         class="mt-2 collapse navbar-collapse mt-sm-0 me-md-0 me-sm-4"
         :class="$store.state.isRTL ? 'px-0' : 'me-sm-4'"
       >
-        <div class="name-cinema text-dark">Rạp: {{ $store.state.cinemaName }}</div>
         <div
           class="pe-md-3 d-flex align-items-center"
           :class="$store.state.isRTL ? 'me-md-auto' : 'ms-md-auto'"
         >
           <div class="input-group">
-            <span class="input-group-text text-body">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </span>
-            <input
-              type="text"
-              class="form-control"
-              :placeholder="$t('Typehere')
-              "
-            />
+            <div class="filter-cinema">
+              <el-select
+                v-model="cinemaSelected"
+                class="m-2"
+                placeholder="Select"
+                size="large"
+                @change="loadData"
+              >
+                <el-option
+                  v-for="item in listCinema"
+                  :key="item.cinemaID"
+                  :label="item.cinemaName"
+                  :value="item.nameDB"
+                />
+              </el-select>
+            </div>
           </div>
         </div>
         <ul class="navbar-nav justify-content-end">
@@ -36,8 +42,11 @@
               class="px-0 nav-link font-weight-bold"
               :class="textWhite ? textWhite : 'text-body'"
             >
-              <i class="fa fa-user" :class="$store.state.isRTL ? 'ms-sm-2' : 'me-sm-1'"></i>
-              <span class="d-sm-inline d-none">{{ $t('signin') }}</span>
+              <i
+                class="fa fa-user"
+                :class="$store.state.isRTL ? 'ms-sm-2' : 'me-sm-1'"
+              ></i>
+              <span class="d-sm-inline d-none">{{ $t("signin") }}</span>
             </router-link>
           </li>
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -135,7 +144,9 @@
               <li>
                 <a class="dropdown-item border-radius-md" href="javascript:;">
                   <div class="py-1 d-flex">
-                    <div class="my-auto avatar avatar-sm bg-gradient-secondary me-3">
+                    <div
+                      class="my-auto avatar avatar-sm bg-gradient-secondary me-3"
+                    >
                       <svg
                         width="12px"
                         height="12px"
@@ -145,7 +156,12 @@
                         xmlns:xlink="http://www.w3.org/1999/xlink"
                       >
                         <title>credit-card</title>
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g
+                          stroke="none"
+                          stroke-width="1"
+                          fill="none"
+                          fill-rule="evenodd"
+                        >
                           <g
                             transform="translate(-2169.000000, -745.000000)"
                             fill="#FFFFFF"
@@ -169,7 +185,9 @@
                       </svg>
                     </div>
                     <div class="d-flex flex-column justify-content-center">
-                      <h6 class="mb-1 text-sm font-weight-normal">Payment successfully completed</h6>
+                      <h6 class="mb-1 text-sm font-weight-normal">
+                        Payment successfully completed
+                      </h6>
                       <p class="mb-0 text-xs text-secondary">
                         <i class="fa fa-clock me-1"></i>
                         2 days
@@ -188,45 +206,53 @@
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapActions } from "vuex";
-import {slideitems} from "@/constants/constantsdefaults"
+import { slideitems } from "@/constants/constantsdefaults";
 
-import BaseImageDownload from '../../views/components/BaseImageDownload.vue';
+import BaseImageDownload from "../../views/components/BaseImageDownload.vue";
 export default {
   name: "NavbarComponent",
 
   components: {
-    Breadcrumbs,BaseImageDownload
+    Breadcrumbs,
+    BaseImageDownload,
   },
   props: {
     minNav: {
       type: Function,
-      default: () => { }
+      default: () => {},
     },
     textWhite: {
       type: String,
-      default: ""
+      default: "",
     },
   },
   data() {
     return {
       showMenu: false,
+      listCinema: [],
+      cinemaSelected: "",
     };
   },
   computed: {
     currentRouteName() {
-      if(this.$route.name){
-        let temp = slideitems.find(x=>{if(x.name == this.$route.name) return x.text});
-        if(temp){
+      if (this.$route.name) {
+        let temp = slideitems.find((x) => {
+          if (x.name == this.$route.name) return x.text;
+        });
+        if (temp) {
           return this.$t(temp.text);
-        }else{
+        } else {
           return "";
         }
       }
       return this.$route.name;
     },
   },
-  created() {
+  async created() {
+    let me = this;
     this.minNav;
+    this.loadListCinema();
+    this.cinemaSelected = localStorage.getItem("dbname");
   },
   updated() {
     const navbar = document.getElementById("navbarBlur");
@@ -241,7 +267,8 @@ export default {
         navbar.classList.remove("shadow-blur");
       }
     });
-  }, methods: {
+  },
+  methods: {
     ...mapMutations(["navbarMinimize", "toggleConfigurator"]),
     ...mapActions(["toggleSidebarColor"]),
 
@@ -250,15 +277,32 @@ export default {
       this.navbarMinimize();
     },
 
-    showSetting(){
+    showSetting() {
       this.$store.state.isShowSetting = true;
-    }
+    },
+
+    async loadListCinema() {
+      let me = this;
+      await this.$api.post("/Account/GetListCinema").then((data) => {
+        me.listCinema = data;
+      });
+    },
+
+    loadData() {
+      let me = this;
+      this.$api
+        .post("/UserLogin/cinemadb",  me.cinemaSelected)
+        .then(() => {
+          localStorage.setItem("dbname", me.cinemaSelected);
+          location.reload();
+        });
+    },
   },
 };
 </script>
 <style>
-#navbar .name-cinema{
+#navbar .name-cinema {
   font-size: 20px;
-    font-weight: 600;
+  font-weight: 600;
 }
 </style>

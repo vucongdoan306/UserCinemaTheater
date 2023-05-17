@@ -72,61 +72,52 @@ const routes = [
     path: "/movie-manage",
     name: "Movie Manage",
     component: MovieManage,
-    meta: { requiresAuth: true },
   },
   {
     path: "/account-manage",
     name: "Account Manage",
     component: Account,
     beforeEnter: requireAdmin,
-    meta: { requiresAuth: true },
   },
   {
     path: "/showtime-manage",
     name: "ShowTime Manage",
     component: ShowTimeManage,
-    meta: { requiresAuth: true },
   },
   {
     path: "/payment",
     name: "Payment",
     component: Payment,
-    meta: { requiresAuth: true },
 
   },
   {
     path: "/revenue",
     name: "Revenue",
     component: Revenue,
-    meta: { requiresAuth: true },
 
   },
   {
     path: "/history",
     name: "History",
     component: History,
-    meta: { requiresAuth: true },
 
   },
   {
     path: "/report-statistic",
     name: "ReportAndStatistic",
     component: ReportAndStatistic,
-    meta: { requiresAuth: true },
 
   },
   {
     path: "/ticket",
     name: "Ticket",
     component: Ticket,
-    meta: { requiresAuth: true },
 
   },
   {
     path: "/showtime-manage/room-cinema",
     component: RoomCinema,
     name: "roomcinema-manage",
-    meta: { requiresAuth: true },
 
   },
   {
@@ -134,14 +125,12 @@ const routes = [
     component: CinemaRoom,
     name: "Cinema Room",
     beforeEnter: requireAdmin,
-    meta: { requiresAuth: true },
 
   },
   {
     path: "/dictionary",
     component: DictionaryMovie,
     name: "Dictionary",
-    meta: { requiresAuth: true },
 
   },
 ];
