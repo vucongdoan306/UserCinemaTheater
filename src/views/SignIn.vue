@@ -120,13 +120,15 @@ export default {
       let me = this;
       this.$store.state.isShowLoading = true;
       this.$api
-        .post("/UserLogin/login", {
+        .post("/UserLogin/loginuser", {
           accountName: me.username,
           password: me.password,
         })
         .then((data) => {
           sessionStorage.setItem("token", data.token);
-          router.push("/");
+          if(data.token){
+            router.push("/");
+          }
           if(!data.token){
             me.$store.dispatch("showToast","Tài khoản hoặc mật khẩu không đúng!");
           }

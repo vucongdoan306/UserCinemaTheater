@@ -63,6 +63,7 @@
 </template>
 <script>
 import { validatePassword } from "@/common/commonFunc";
+import jwt from "jsonwebtoken";
 
 export default {
   components: {},
@@ -82,9 +83,11 @@ export default {
     loadData() {
       let me = this;
       this.$store.state.isShowLoading = true;
+      let token = sessionStorage.getItem("token");
+      let accountName = jwt.decode(token).name;
       this.$api
         .post("/Account/GetAccountByAccountName", {
-          accountName: me.$store.state.thisAccountName,
+          accountName: accountName,
         })
         .then((data) => {
           me.dataAccount = data;

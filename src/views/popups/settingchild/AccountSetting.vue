@@ -1,7 +1,7 @@
 <template>
   <div class="account-child-setting">
     <div class="account-info-header">
-      Nếu muốn thay đổi thông tin tài khoản. Vui lòng liên hệ quản trị viên.
+      Nếu muốn thay đổi thông tin tài khoản. Vui lòng liên hệ tới hotline rạp chiếu.
     </div>
     <div class="account-info-container">
       <div class="account-info">
@@ -32,18 +32,6 @@
         <div class="info-row">
           <div class="info-label">Số điện thoại:</div>
           <div class="info-content">{{ dataAccount.phoneNumber ?? "" }}</div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">Loại tài khoản:</div>
-          <div class="info-content">
-            {{
-              dataAccount.role == 1
-                ? "Quản trị viên"
-                : dataAccount.role == 2
-                ? "Nhân viên"
-                : "Quản lý"
-            }}
-          </div>
         </div>
       </div>
     </div>

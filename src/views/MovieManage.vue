@@ -23,21 +23,8 @@
           :key="item.movieID"
           v-show="isShowMovie(item)"
         >
-          <base-image-download
-            :linkImg="item.posterLink"
-            v-if="!isOpenTrailer(item.movieID)"
-          ></base-image-download>
-          <div class="movie-trailer" v-if="isOpenTrailer(item.movieID)">
-            <iframe
-              width="120"
-              height="200"
-              :src="item.trailerLink"
-              title="YouTube video player"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
-          </div>
+          <base-image-download :linkImg="item.posterLink"></base-image-download>
+
           <div class="movie-detail">
             <div class="movie-name">
               <div
@@ -47,7 +34,11 @@
                 {{ item.movieName }}
               </div>
               <div class="group-icon">
-                <div class="icon-trailer" title="Mua vé">
+                <div
+                  class="icon-trailer"
+                  title="Mua vé"
+                  @click="openTemplateTimeMovie(item.movieID, item.movieName)"
+                >
                   <i class="fas fa-ticket-alt"></i>
                 </div>
               </div>
@@ -87,26 +78,17 @@
         </div>
       </div>
     </div>
-    <popup-add-movie
-      v-if="$store.state.IsOpenPopup"
-      @add-click="handleAdd()"
-    ></popup-add-movie>
-    <popup-delete
-      v-if="$store.state.isOpenPopupDelete"
-      @delete-click="deleteMovie()"
-      :content="rowSelected.movieCode"
-    ></popup-delete>
     <popup-show-content
       v-if="$store.state.isOpenPopupShowContent"
       :contentMovie="contentSelected"
       :nameMovie="nameMovie"
     ></popup-show-content>
-    <popup-alter-movie
-      v-if="$store.state.isOpenPopupAlterMovie"
-      :idMovie="rowSelected"
-      @add-click="handelAlter()"
-    >
-    </popup-alter-movie>
+
+    <popup-seat-cinema
+    v-if="$store.state.isOpenPopupSeat"
+    :nameMovie="movieNameSelected"
+    :idMovie="movieIDSelected"
+  ></popup-seat-cinema>
   </div>
 </template>
 
@@ -115,24 +97,22 @@ import { fields } from "@/constants/constantsmoviegrids.js";
 import { filterMovie } from "@/constants/constantsdefaults.js";
 import BaseLoading from "./components/BaseLoading.vue";
 import BaseButton from "./components/BaseButton.vue";
-import PopupAddMovie from "./popups/PopupAddMovie.vue";
 import BaseImageDownload from "./components/BaseImageDownload.vue";
 import VsudInput from "../components/VsudInput.vue";
-import PopupDelete from "./popups/PopupDelete.vue";
 import { convertDateFormat } from "@/common/commonFunc";
 import PopupShowContent from "./popups/PopupShowContent.vue";
-import PopupAlterMovie from "./popups/PopupAlterMovie.vue";
+import PopupSeatCinema from "./popups/PopupSeatCinema.vue";
+import router from "@/router/index";
+
 export default {
   name: "MovieManager",
   components: {
     BaseLoading,
     BaseButton,
-    PopupAddMovie,
     BaseImageDownload,
     VsudInput,
-    PopupDelete,
     PopupShowContent,
-    PopupAlterMovie,
+    PopupSeatCinema,
   },
   setup() {
     return { convertDateFormat, filterMovie };
@@ -161,32 +141,17 @@ export default {
       contentSelected: "",
       nameMovie: "",
       typeFilter: 1,
+      movieIDSelected: "",
+      movieNameSelected: ""
     };
   },
   methods: {
-    getAlterMovie(item) {
-      this.rowSelected = item;
-      this.$store.state.isOpenPopupAlterMovie = true;
-    },
     isShowMovie(item) {
       return (
         item.movieName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
         item.movieCode.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     },
-
-    isOpenTrailer(id) {
-      return this.openTrailers.find((x) => x == id);
-    },
-
-    openTrailer(id) {
-      if (this.openTrailers.find((x) => x == id)) {
-        this.openTrailers = this.openTrailers.filter((x) => x != id);
-      } else {
-        this.openTrailers.push(id);
-      }
-    },
-
     isOpenContext(id) {
       return this.openContexts.find((x) => x == id);
     },
@@ -211,12 +176,6 @@ export default {
       this.$store.state.isOpenPopupDelete = true;
     },
 
-    deleteMovie() {
-      let me = this;
-      this.$api.post("/Movie/DeleteMovie", me.rowSelected).then(() => {
-        me.loadData();
-      });
-    },
     loadData() {
       let me = this;
       this.$store.state.isShowLoading = true;
@@ -240,6 +199,17 @@ export default {
       this.nameMovie = name;
       this.contentSelected = content;
       this.$store.state.isOpenPopupShowContent = true;
+    },
+
+    openTemplateTimeMovie(id,name) {
+      this.movieIDSelected = id;
+      this.movieNameSelected = name;
+      if(sessionStorage.getItem("token")){
+
+        this.$store.state.isOpenPopupSeat = true;
+      }else{
+        router.push("/sign-in");
+      }
     },
   },
 };
@@ -404,7 +374,7 @@ export default {
             border-radius: 50%;
             cursor: pointer;
             transform: scale(1.4);
-            &:hover{
+            &:hover {
               opacity: 0.6;
             }
           }

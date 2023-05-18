@@ -87,16 +87,6 @@
           Ghế thường: <span class="bold">{{ totalNormal }}</span>
         </div>
       </div>
-
-      <div class="user-select">
-        <div class="note">Chọn người dùng</div>
-        <v-select
-          label="name"
-          :options="dataCustomerTemp"
-          v-model="accountSelected"
-          :reduce="(typeName) => typeName.accountID"
-        ></v-select>
-      </div>
     </div>
     <div class="seatroom-footer">
       <div class="footer-left">
@@ -132,6 +122,7 @@
 import { listSeat, convertLetter } from "@/constants/constantsdefaults";
 import BaseButton from "@/views/components/BaseButton.vue";
 import { convertDateFormat, convertTimeFormat } from "@/common/commonFunc";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "PopupSeatRoomManage",
@@ -159,6 +150,8 @@ export default {
       me.dataCustomer = data;
       me.dataCustomerTemp = data;
     });
+
+    this.loadDataAccount();
   },
   props: {
     idMovie: {
@@ -188,6 +181,8 @@ export default {
       dataCustomer: [],
       dataCustomerTemp: [],
       accountSelected: "",
+      customerName: "",
+      phoneNumber: ""
     };
   },
   methods: {
@@ -207,6 +202,15 @@ export default {
       this.seatsSelecting = [];
       this.roomCinmeIDSelected = id;
       this.loadDataSeat(id);
+    },
+    loadDataAccount(){
+      let me = this;
+      let token = sessionStorage.getItem("token");
+      let accountName = jwt.decode(token).name;
+      this.$api.post("/Account/GetAccountByAccountName",{accountName: accountName}).then(data=>{
+        me.customerName = data.name;
+        me.phoneNumber = data.phoneNumber;
+      })
     },
     loadDataSeat(id) {
       let me = this;
@@ -318,16 +322,12 @@ export default {
 
     SaveState() {
       let me = this;
-      let cusName = "";
-      let phoneNum = "";
+
       let templateTimeCode = "";
       let tempTime = "";
       let postDate = null;
       let roomCode = "";
-      if(this.dataCustomer && me.accountSelected){
-        cusName=this.dataCustomer.find(x=>x.accountID==me.accountSelected).name;
-        phoneNum = this.dataCustomer.find(x=>x.accountID==me.accountSelected).phoneNumber;
-      }
+
 
       if(this.dataTemplateTime){
         templateTimeCode = this.dataTemplateTime.find(x=>x.roomCinemaID == me.roomCinmeIDSelected).templateTimeCode;
@@ -339,8 +339,8 @@ export default {
       this.$api.post("/History/InsertIntoHistory",{
           movieID: me.idMovie,
           roomCinemaID: me.roomCinmeIDSelected,
-          customerName: cusName,
-          phoneNumber: phoneNum,
+          customerName: me.customerName,
+          phoneNumber: me.phoneNumber,
           templateTimeCode: templateTimeCode,
           time: tempTime,
           movieName: me.nameMovie,
