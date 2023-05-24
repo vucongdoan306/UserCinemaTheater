@@ -120,7 +120,7 @@ export default {
       let me = this;
       this.$store.state.isShowLoading = true;
       this.$api
-        .post("/UserLogin/loginuser", {
+        .post("/UserLogin/loginuseruser", {
           accountName: me.username,
           password: me.password,
         })

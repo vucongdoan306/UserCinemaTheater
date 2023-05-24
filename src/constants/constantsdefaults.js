@@ -1,7 +1,7 @@
 export var slideitems = [
   {
     name: "Movie Manage",
-    icon: "virtual-reality",
+    icon: "movie",
     text: "NowShowing",
   },
   {
