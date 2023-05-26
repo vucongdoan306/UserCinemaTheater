@@ -4,6 +4,7 @@
     class="my-3 overflow-auto border-0 sidenav navbar navbar-vertical navbar-expand-xs border-radius-xl"
     :class="$store.state.isRTL ? 'me-3 rotate-caret' : 'ms-3'"
     :data-color="sidenavActiveBgColors"
+    v-if="false"
   >
     <div class="sidenav-header">
       <i

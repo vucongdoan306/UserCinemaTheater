@@ -61,3 +61,13 @@ export const filterMovie = [
     name: "Sắp chiếu",
   },
 ];
+
+export const footerCol1 = [
+  "Tuyển dụng",
+  "Giới thiệu",
+  "Liên hệ",
+  "F.A.Q",
+  "Hoạt động xã hội",
+  "Điều khoản sử dụng",
+  "Chính sách thanh toán, đổi trả - hoàn vé",
+];

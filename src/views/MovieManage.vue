@@ -1,16 +1,54 @@
 <template>
   <div class="movie-manage">
-    <div class="movie-manage-header">
-      <div class="header-left">
-        <vsud-input
-          type="text"
-          :placeholder="$t('Search')"
-          name="search_movie"
-          v-model="searchValue"
-          :id="'search_movie'"
-        />
+    <div class="movie-banner">
+      <div
+        id="carouselExampleIndicators"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-indicators">
+          <button
+            type="button"
+            data-bs-target="#carouselExampleIndicators"
+            data-bs-slide-to="0"
+            class="active"
+            aria-current="true"
+            aria-label="Slide 1"
+          ></button>
+          <button
+            type="button"
+            data-bs-target="#carouselExampleIndicators"
+            data-bs-slide-to="1"
+            aria-label="Slide 2"
+          ></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img :src="banner1" class="d-block w-100 h_500 border-radius-10" alt="..." />
+          </div>
+          <div class="carousel-item">
+            <img :src="banner2" class="d-block w-100 h_500 border-radius-10" alt="..." />
+          </div>
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
       </div>
-      <div class="header-right"></div>
     </div>
     <div class="movie-manage-container">
       <div class="movie-manage-main">
@@ -85,10 +123,10 @@
     ></popup-show-content>
 
     <popup-seat-cinema
-    v-if="$store.state.isOpenPopupSeat"
-    :nameMovie="movieNameSelected"
-    :idMovie="movieIDSelected"
-  ></popup-seat-cinema>
+      v-if="$store.state.isOpenPopupSeat"
+      :nameMovie="movieNameSelected"
+      :idMovie="movieIDSelected"
+    ></popup-seat-cinema>
   </div>
 </template>
 
@@ -103,7 +141,8 @@ import { convertDateFormat } from "@/common/commonFunc";
 import PopupShowContent from "./popups/PopupShowContent.vue";
 import PopupSeatCinema from "./popups/PopupSeatCinema.vue";
 import router from "@/router/index";
-
+import banner1 from "@/assets/img/baner1.png";
+import banner2 from "@/assets/img/banner2.png";
 export default {
   name: "MovieManager",
   components: {
@@ -142,7 +181,7 @@ export default {
       nameMovie: "",
       typeFilter: 1,
       movieIDSelected: "",
-      movieNameSelected: ""
+      movieNameSelected: "",banner1,banner2
     };
   },
   methods: {
@@ -201,13 +240,12 @@ export default {
       this.$store.state.isOpenPopupShowContent = true;
     },
 
-    openTemplateTimeMovie(id,name) {
+    openTemplateTimeMovie(id, name) {
       this.movieIDSelected = id;
       this.movieNameSelected = name;
-      if(sessionStorage.getItem("token")){
-
+      if (sessionStorage.getItem("token")) {
         this.$store.state.isOpenPopupSeat = true;
-      }else{
+      } else {
         router.push("/sign-in");
       }
     },
