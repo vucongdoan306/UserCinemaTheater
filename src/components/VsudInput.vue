@@ -18,6 +18,7 @@
         @blur="checkRequired()"
         @keydown.enter="checkEnter()"
         :autocomplete="autocomplete"
+        :maxlength="maxlength"
       />
       <textarea
         :id="id"
@@ -80,6 +81,7 @@ export default {
       type: String,
       default: "",
     },
+    maxlength:Number,
     isRequired: {type: Boolean, default: false},
     isMultiple: { type: Boolean, default: false },
     readonly: Boolean,

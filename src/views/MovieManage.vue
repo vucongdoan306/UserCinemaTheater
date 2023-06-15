@@ -24,10 +24,18 @@
         </div>
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <img :src="banner1" class="d-block w-100 h_500 border-radius-10" alt="..." />
+            <img
+              :src="banner1"
+              class="d-block w-100 h_500 border-radius-10"
+              alt="..."
+            />
           </div>
           <div class="carousel-item">
-            <img :src="banner2" class="d-block w-100 h_500 border-radius-10" alt="..." />
+            <img
+              :src="banner2"
+              class="d-block w-100 h_500 border-radius-10"
+              alt="..."
+            />
           </div>
         </div>
         <button
@@ -53,66 +61,106 @@
     <div class="movie-manage-container">
       <div class="movie-manage-main">
         <div class="main-empty" v-if="dataSource.length < 1">
-          Không có dữ liệu
+          {{ $t("Nodata") }}
         </div>
-        <div
-          class="movie-item"
-          v-for="item in dataSource"
-          :key="item.movieID"
-          v-show="isShowMovie(item)"
-        >
-          <base-image-download :linkImg="item.posterLink"></base-image-download>
+        <div class="movie-item-container">
+          <el-row
+            :gutter="24"
+            v-for="(group, index) in groupedItems"
+            :key="index"
+          >
+            <el-col :span="8" v-for="item in group" :key="item.movieID">
+              <div class="movie-item">
+                <base-image-download
+                  :linkImg="item.posterLink"
+                ></base-image-download>
+                <div class="movie-detail">
+                  <div class="movie-name">
+                    <el-tooltip
+                      class="box-item"
+                      effect="dark"
+                      :content="item.movieName + ' - ' + item.movieCode"
+                      placement="top"
+                    >
+                      <div
+                        class="movie-content"
+                        @click="openContent(item.movieName, item.content)"
+                      >
+                        {{ item.movieName }} - {{ item.movieCode }}
+                      </div>
+                    </el-tooltip>
 
-          <div class="movie-detail">
-            <div class="movie-name">
-              <div
-                class="movie-content"
-                @click="openContent(item.movieName, item.content)"
-              >
-                {{ item.movieName }}
-              </div>
-              <div class="group-icon">
-                <div
-                  class="icon-trailer"
-                  title="Mua vé"
-                  @click="openTemplateTimeMovie(item.movieID, item.movieName)"
-                >
-                  <i class="fas fa-ticket-alt"></i>
+                    <div class="group-icon">
+                      <el-tooltip
+                        class="box-item"
+                        effect="dark"
+                        :content="$t('Buyticket')"
+                        placement="top"
+                      >
+                        <div
+                          class="icon-trailer"
+                          title="Mua vé"
+                          @click="
+                            openTemplateTimeMovie(item.movieID, item.movieName)
+                          "
+                        >
+                          <i class="fas fa-ticket-alt"></i>
+                        </div>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                  <div class="movie-time-line">
+                    {{ $t("RunningTime") }}: {{ item.timeLine }} {{ $t("Min") }}
+                  </div>
+                  <div class="movie-from-date">
+                    {{ $t("nShowDate") }}:
+                    {{ convertDateFormat(item.fromDate) }}
+                  </div>
+                  <div class="movie-to-date">
+                    {{ $t("nEndDate") }}: {{ convertDateFormat(item.toDate) }}
+                  </div>
+                  <div class="movie-release-date">
+                    {{ $t("Releasedate") }}:
+                    {{ convertDateFormat(item.releaseDate) }}
+                  </div>
+                  <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    :content="$t('nActor') + ': ' + item.actor"
+                    placement="top"
+                  >
+                    <div class="movie-actor">
+                      {{ $t("nActor") }}: {{ item.actor }}
+                    </div>
+                  </el-tooltip>
+                  <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    :content="$t('Director') + ': ' + item.directions"
+                    placement="top"
+                  >
+                    <div class="movie-direction">
+                      {{ $t("Director") }}: {{ item.directions }}
+                    </div>
+                  </el-tooltip>
+                  <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    :content="$t('CategoryMovie') + ': ' + item.categoryName"
+                    placement="top"
+                  >
+                    <div class="movie-category" :title="item.categoryName">
+                      {{ $t("CategoryMovie") }}: {{ item.categoryName }}
+                    </div>
+                  </el-tooltip>
+
+                  <div class="movie-type">
+                    {{ $t("TypeMovie") }}: {{ item.typeName }}
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="movie-time-line">
-              <span class="bold">{{ $t("Timel") }}:</span> {{ item.timeLine }}
-              {{ $t("Min") }}
-            </div>
-            <div class="movie-from-date">
-              <span class="bold">{{ $t("nShowDate") }}:</span>
-              {{ convertDateFormat(item.fromDate) }}
-            </div>
-            <div class="movie-to-date">
-              <span class="bold">{{ $t("nEndDate") }}:</span>
-              {{ convertDateFormat(item.toDate) }}
-            </div>
-            <div class="movie-release-date">
-              <span class="bold">{{ $t("Releasedate") }}:</span>
-              {{ convertDateFormat(item.releaseDate) }}
-            </div>
-            <div class="movie-actor">
-              <span class="bold">{{ $t("nActor") }}:</span> {{ item.actor }}
-            </div>
-            <div class="movie-direction">
-              <span class="bold">{{ $t("Director") }}:</span>
-              {{ item.directions }}
-            </div>
-            <div class="movie-category" :title="item.categoryName">
-              <span class="bold">{{ $t("CategoryMovie") }}:</span>
-              {{ item.categoryName }}
-            </div>
-            <div class="movie-type">
-              <span class="bold">{{ $t("TypeMovie") }}:</span>
-              {{ item.typeName }}
-            </div>
-          </div>
+                <div class="movie-detail"></div></div
+            ></el-col>
+          </el-row>
         </div>
       </div>
     </div>
@@ -167,6 +215,26 @@ export default {
         this.$store.state.isShowLoading = false;
       });
   },
+  computed: {
+    groupedItems() {
+      const groupSize = 3; // Số lượng bản ghi trong mỗi nhóm
+      const grouped = [];
+      let group = [];
+
+      this.dataSource.forEach((item, index) => {
+        group.push(item);
+        if (
+          (index + 1) % groupSize === 0 ||
+          index === this.dataSource.length - 1
+        ) {
+          grouped.push(group);
+          group = [];
+        }
+      });
+
+      return grouped;
+    },
+  },
   data() {
     return {
       dataField: [],
@@ -181,7 +249,9 @@ export default {
       nameMovie: "",
       typeFilter: 1,
       movieIDSelected: "",
-      movieNameSelected: "",banner1,banner2
+      movieNameSelected: "",
+      banner1,
+      banner2,
     };
   },
   methods: {
@@ -243,7 +313,7 @@ export default {
     openTemplateTimeMovie(id, name) {
       this.movieIDSelected = id;
       this.movieNameSelected = name;
-      if (sessionStorage.getItem("token")) {
+      if (localStorage.getItem("token")) {
         this.$store.state.isOpenPopupSeat = true;
       } else {
         router.push("/sign-in");
@@ -303,23 +373,25 @@ export default {
   }
 
   .movie-manage-container {
+    min-height: calc(100vh - 275px);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    background: #fff;
+    border-radius: 10px;
+    min-width: 1400px;
     .movie-manage-main {
-      min-height: calc(100vh - 275px);
-      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-      background: #fff;
-      border-radius: 10px;
-      padding: 20px 0;
+      padding: 20px;
       margin-top: 30px;
-      display: flex;
+
       flex-wrap: wrap;
       min-width: 500px;
       .movie-item {
         background: #fff;
         position: relative;
-        margin-left: 20px;
+        margin-left: auto;
+        margin-right: auto;
         min-width: 500px;
-        width: 500px;
+        width: 580px;
         color: #111;
         display: flex;
         height: 250px;
@@ -330,7 +402,7 @@ export default {
         font-size: 13px;
         .movie-detail {
           width: 320px;
-          font-size: 14px;
+          font-size: 16px;
           .bold {
             font-weight: 600;
           }
@@ -351,12 +423,13 @@ export default {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 280px;
+          width: 350px;
         }
 
         .movie-name {
-          font-size: 16px;
+          font-size: 20px;
           font-weight: 600;
+          width: 400px;
           display: flex;
           justify-content: space-between;
           .movie-content {
@@ -368,11 +441,11 @@ export default {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            width: 270px;
           }
 
           .group-icon {
             display: flex;
+            font-size: 14px;
             .icon-trailer {
               position: relative;
             }
@@ -401,7 +474,9 @@ export default {
           }
 
           .icon-trailer {
-            margin-left: 5px;
+            margin-left: 10px;
+            margin-right: 5px;
+            margin-top: 5px;
             height: 24px;
             width: 24px;
             background: #1a72ff;
@@ -412,6 +487,7 @@ export default {
             border-radius: 50%;
             cursor: pointer;
             transform: scale(1.4);
+
             &:hover {
               opacity: 0.6;
             }

@@ -1,3 +1,9 @@
+:root {
+  --primary-color: #409EFF;
+}
+
+
+
 .vue3-easy-data-table {
   flex-shrink: 0;
   width: 100%;
@@ -74,10 +80,97 @@ border: 3px solid transparent;
   color: #000;
 }
 
-.h_500{
-  height: 500px;
+.w-200{
+  width: 200px!important;
 }
 
-.border-radius-10{
-  border-radius: 10px;
+.w-99{
+  width: 99px!important;
+}
+
+.w-150{
+  width: 150px!important;
+}
+
+.h-opacity{
+  &:hover{
+    opacity: 0.6;
+    cursor: pointer;
+  }
+}
+
+
+.color-black{
+  color: #000;
+
+  input{
+    color: #000!important;
+  }
+
+  .el-input__inner{
+    color: #000!important;
+
+  }
+}
+
+.el-select__popper{
+  z-index: 10000!important;
+}
+
+.el-popper{
+  z-index: 10000!important;
+}
+
+.el-dialog{
+  border-radius: 10px!important;
+  .el-dialog__header{
+    .el-dialog__title{
+      font-weight: 700;
+
+    }
+
+    height: 60px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 18px 0;width: 100%;
+    background: #ddefff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    .popup-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: #111;
+    }
+    .popup-icon-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      height: 20px;
+      width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  
+  }
+}
+
+
+.el-form-item__content{
+  .ticket-base-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+
+.el-button{
+  font-weight: 600!important;
 }

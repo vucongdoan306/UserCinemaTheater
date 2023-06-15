@@ -246,7 +246,6 @@ export default {
       this.$store.state.isOpenPopupAlterMovie = false;
     },
     catchUrl(value) {
-      console.log(10);
       this.dataMovie.urlImage = value;
     },
     postMovie() {

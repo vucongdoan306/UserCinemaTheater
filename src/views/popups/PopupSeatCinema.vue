@@ -3,24 +3,32 @@
     <div class="seatroom-header">
       <div class="seatroom-header-left">
         <i class="fas fa-long-arrow-alt-left" @click="closePopup()"></i>
-        <div class="content">{{$t('Back')}}</div>
+        <div class="content">{{ $t("Back") }}</div>
       </div>
       <div class="seatroom-header-center">
-        <div class="content-main">{{ $t('Screeningsofthemovie') }} {{ nameMovie }}</div>
+        <div class="content-main">
+          {{ $t("Screeningsofthemovie") }} {{ nameMovie }}
+        </div>
       </div>
     </div>
     <div class="template-time-code-main">
-      <div
-        class="template-time-card"
-        v-for="item in dataTemplateTime"
-        :key="item"
-        :class="isSelectingRoomCinema(item.roomCinemaID) ? ' selecting' : ''"
-        @click="openTemplateSeat(item.roomCinemaID)"
-      >
-        <div class="time-item">{{ convertTimeFormat(item.time) }}</div>
-        <div class="room-item">{{ item.roomCode }}</div>
-        <div class="date-item">{{ convertDateFormat(item.postDate) }}</div>
-      </div>
+      <el-scrollbar>
+        <div class="scrollbar-flex-content">
+          <div
+            class="template-time-card"
+            v-for="item in dataTemplateTime"
+            :key="item"
+            :class="
+              isSelectingRoomCinema(item.roomCinemaID) ? ' selecting' : ''
+            "
+            @click="openTemplateSeat(item.roomCinemaID)"
+          >
+            <div class="time-item">{{ convertTimeFormat(item.time) }}</div>
+            <div class="room-item">{{ item.roomCode }}</div>
+            <div class="date-item">{{ convertDateFormat(item.postDate) }}</div>
+          </div>
+        </div>
+      </el-scrollbar>
     </div>
     <div class="seatroom-main" v-if="isOpenTemplateSeat">
       <div class="screen-select-seat">
@@ -43,48 +51,60 @@
         </div>
       </div>
       <div class="description-seat">
-        <div class="note">Chú thích</div>
+        <div class="note">{{ $t("Note") }}</div>
         <div class="seat-selected">
           <div class="color-selected"></div>
-          <div class="content-selected">Đã được mua</div>
+          <div class="content-selected">{{ $t("SeatSold") }}</div>
         </div>
         <div class="seat-unselected">
           <div class="color-unselected"></div>
-          <div class="content-unselected">Ghế thường</div>
+          <div class="content-unselected">{{ $t("Normalseat") }}</div>
         </div>
         <div class="seat-unselected">
           <div class="color-vip"></div>
-          <div class="content-unselected">Ghế VIP</div>
+          <div class="content-unselected">{{ $t("VIPseat") }}</div>
         </div>
         <div class="seat-unselected">
           <div class="color-unuse"></div>
-          <div class="content-unselected">Bảo trì</div>
+          <div class="content-unselected">{{ $t("Maintenance") }}</div>
         </div>
         <div class="seat-selecting">
           <div class="color-selecting"></div>
-          <div class="content-selecting">Đang chọn</div>
+          <div class="content-selecting">{{ $t("SeatSelecting") }}</div>
         </div>
       </div>
 
       <div class="description-total">
-        <div class="note">Thống kê</div>
+        <div class="note">{{ $t("Statistic") }}</div>
         <div class="total-seat">
-          Tổng số ghế: <span class="bold"> {{ totalSeat }} </span>
+          {{ $t("TotalSeat") }}: <span class="bold"> {{ totalSeat }} </span>
         </div>
         <div class="seat-unselected">
-          Ghế đã bán: <span class="bold">{{ totalSelected }}</span>
+          {{ $t("SeatSold") }}: <span class="bold">{{ totalSelected }}</span>
         </div>
         <div class="seat-unselected">
-          Ghế đang chọn: <span class="bold">{{ totalSelecting }}</span>
+          {{ $t("SeatSelecting") }}:
+          <span class="bold">{{ totalSelecting }}</span>
         </div>
         <div class="seat-unselected">
-          Ghế bảo trì: <span class="bold">{{ totalMaintenance }}</span>
+          {{ $t("Maintenance") }}:
+          <span class="bold">{{ totalMaintenance }}</span>
         </div>
         <div class="seat-selecting">
-          Ghế VIP: <span class="bold">{{ totalVIP }}</span>
+          {{ $t("VIPseat") }}: <span class="bold">{{ totalVIP }}</span>
         </div>
         <div class="seat-selecting">
-          Ghế thường: <span class="bold">{{ totalNormal }}</span>
+          {{ $t("Normalseat") }}: <span class="bold">{{ totalNormal }}</span>
+        </div>
+      </div>
+
+      <div class="checkout-total">
+        <div class="note">{{ $t("Payment") }}</div>
+        <div class="seat-selecting">
+          {{ $t("TotalAmount") }}:
+          <span class="bold">{{
+            formatNumber(totalAmountSelected) + " VNĐ"
+          }}</span>
         </div>
       </div>
     </div>
@@ -104,14 +124,15 @@
           @bindEvent="closePopup()"
         ></base-button>
         <div class="ml-2"></div>
-        <base-button
-          :classButton="[
-            'button-blue',
-            seatsSelecting.length ? '' : ' button-none',
-          ]"
-          :titleButton="'Đặt vé'"
-          @bindEvent="SaveState()"
-        ></base-button>
+
+        <el-button
+          type="primary"
+          @click="SaveState(2)"
+          :disabled="!seatsSelecting.length"
+        >
+          {{ $t("Checkout") }}
+        </el-button>
+
         <div class="ml-2"></div>
       </div>
     </div>
@@ -119,10 +140,16 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
+
 import { listSeat, convertLetter } from "@/constants/constantsdefaults";
 import BaseButton from "@/views/components/BaseButton.vue";
-import { convertDateFormat, convertTimeFormat } from "@/common/commonFunc";
-import jwt from "jsonwebtoken";
+import {
+  convertDateFormat,
+  convertTimeFormat,
+  formatNumber,
+} from "@/common/commonFunc";
+import router from "@/router/index";
 
 export default {
   name: "PopupSeatRoomManage",
@@ -132,11 +159,14 @@ export default {
       convertLetter,
       convertDateFormat,
       convertTimeFormat,
+      formatNumber,
     };
   },
   components: { BaseButton },
   created() {
     let me = this;
+    localStorage.removeItem("checkout");
+    this.$store.state.isShowLoading = true;
     this.$api
       .post("/Movie/GetListRoomCinemaByMovieID", {
         movieID: me.idMovie,
@@ -146,12 +176,23 @@ export default {
         me.dataTemplateTime = data;
       });
 
-    this.$api.post("/Account/GetListCustomer").then((data) => {
+    this.$api.get("/Account/GetListCustomer").then((data) => {
       me.dataCustomer = data;
       me.dataCustomerTemp = data;
+      me.$store.state.isShowLoading = false;
     });
-
+    this.loadDataTicket();
     this.loadDataAccount();
+  },
+  watch: {
+    roomCinmeIDSelected(newVal) {
+      this.normalCost = this.templateDataTicket.find(
+        (x) => (x.movieID = newVal && x.type == 1)
+      ).cost;
+      this.vipCost = this.templateDataTicket.find(
+        (x) => (x.movieID = newVal && x.type == 2)
+      ).cost;
+    },
   },
   props: {
     idMovie: {
@@ -165,7 +206,10 @@ export default {
   },
   data() {
     return {
+      normalCost: 0,
+      vipCost: 0,
       dataSeat: [],
+      isShowDialogBooking: false,
       seatsSelecting: [],
       maxRow: 0,
       maxCol: 0,
@@ -181,11 +225,13 @@ export default {
       dataCustomer: [],
       dataCustomerTemp: [],
       accountSelected: "",
-      customerName: "",
-      phoneNumber: ""
+      roomCodePrint: "",
+      templateDataTicket: [],
+      totalAmountSelected: 0,
     };
   },
   methods: {
+
     filterSearch() {
       if (search) {
         this.dataCustomerTemp = this.dataCustomerTemp.filter(
@@ -197,28 +243,42 @@ export default {
         this.dataCustomerTemp = JSON.parse(JSON.stringify(this.dataCustomer));
       }
     },
+
+    filterMethod(query) {
+      query = query.toLowerCase();
+      this.dataCustomerTemp = this.dataCustomer.filter(
+        (x) =>
+          x.phoneNumber.includes(query) || x.name.toLowerCase().includes(query)
+      );
+      // return option.data.phoneNumber.indexOf(query) > -1;
+    },
     openTemplateSeat(id) {
       this.isOpenTemplateSeat = false;
       this.seatsSelecting = [];
       this.roomCinmeIDSelected = id;
       this.loadDataSeat(id);
     },
-    loadDataAccount(){
+
+    loadDataTicket() {
       let me = this;
-      let token = sessionStorage.getItem("token");
-      let accountName = jwt.decode(token).name;
-      this.$api.post("/Account/GetAccountByAccountName",{accountName: accountName}).then(data=>{
-        me.customerName = data.name;
-        me.phoneNumber = data.phoneNumber;
-      })
+      this.$store.state.isShowLoading = true;
+
+      this.$api.get("/Ticket/GetListTemplateTicket").then((data) => {
+        me.templateDataTicket = data;
+        this.$store.state.isShowLoading = false;
+      });
     },
+
     loadDataSeat(id) {
       let me = this;
+      this.$store.state.isShowLoading = true;
       this.$api
         .post("/Movie/GetListSeatCinemaRoom", {
           roomCinemaID: id,
         })
         .then((data) => {
+          me.$store.state.isShowLoading = false;
+
           me.dataSeat = data;
           this.getLastRowCol(me.dataSeat);
           me.isOpenTemplateSeat = true;
@@ -227,6 +287,7 @@ export default {
           me.totalSelecting = 0;
           me.totalMaintenance = 0;
           me.totalVIP = 0;
+          me.totalAmountSelected = 0;
           me.totalNormal = 0;
           me.seatsSelecting = [];
           me.dataSeat.forEach((item) => {
@@ -297,6 +358,8 @@ export default {
           this.seatsSelecting = this.seatsSelecting.filter(
             (item) => item.rowSeat !== row || item.colSeat !== col
           );
+          this.totalAmountSelected -=
+            typeSeat == 1 ? this.normalCost : this.vipCost;
         } else {
           this.seatsSelecting.push({
             rowSeat: row,
@@ -305,6 +368,8 @@ export default {
             Type: typeSeat,
             SeatName: convertLetter(row) + col,
           });
+          this.totalAmountSelected +=
+            typeSeat == 1 ? this.normalCost : this.vipCost;
         }
       }
 
@@ -312,31 +377,56 @@ export default {
     },
 
     isSelecting(row, col) {
-      console.log(
-        this.seatsSelecting.find((x) => x.rowSeat == row && x.colSeat == col)
-      );
       return this.seatsSelecting.find(
         (x) => x.rowSeat == row && x.colSeat == col
       );
     },
 
-    SaveState() {
+    loadDataAccount(){
       let me = this;
+      let token = localStorage.getItem("token");
+      let accountName = jwt.decode(token).name;
+      this.$api.post("/Account/GetAccountByAccountName",{accountName: accountName}).then(data=>{
+        me.customerName = data.name;
+        me.phoneNumber = data.phoneNumber;
+      })
+    },
 
+    SaveState(id) {
+      let me = this;
+      let cusName = "";
+      let phoneNum = "";
       let templateTimeCode = "";
       let tempTime = "";
       let postDate = null;
       let roomCode = "";
-
-
-      if(this.dataTemplateTime){
-        templateTimeCode = this.dataTemplateTime.find(x=>x.roomCinemaID == me.roomCinmeIDSelected).templateTimeCode;
-        tempTime = this.dataTemplateTime.find(x=>x.roomCinemaID == me.roomCinmeIDSelected).time;
-        postDate = this.dataTemplateTime.find(x=>x.roomCinemaID == me.roomCinmeIDSelected).postDate;
-        roomCode = this.dataTemplateTime.find(x=>x.roomCinemaID == me.roomCinmeIDSelected).roomCode;
+      if (this.dataCustomer && me.accountSelected) {
+        cusName = this.dataCustomer.find(
+          (x) => x.accountID == me.accountSelected
+        ).name;
+        phoneNum = this.dataCustomer.find(
+          (x) => x.accountID == me.accountSelected
+        ).phoneNumber;
       }
 
-      this.$api.post("/History/InsertIntoHistory",{
+      if (this.dataTemplateTime) {
+        templateTimeCode = this.dataTemplateTime.find(
+          (x) => x.roomCinemaID == me.roomCinmeIDSelected
+        ).templateTimeCode;
+        tempTime = this.dataTemplateTime.find(
+          (x) => x.roomCinemaID == me.roomCinmeIDSelected
+        ).time;
+        postDate = this.dataTemplateTime.find(
+          (x) => x.roomCinemaID == me.roomCinmeIDSelected
+        ).postDate;
+        roomCode = this.dataTemplateTime.find(
+          (x) => x.roomCinemaID == me.roomCinmeIDSelected
+        ).roomCode;
+        this.roomCodePrint = roomCode;
+      }
+
+      if (id == 2) {
+        this.$store.state.dataCheckout.history = {
           movieID: me.idMovie,
           roomCinemaID: me.roomCinmeIDSelected,
           customerName: me.customerName,
@@ -347,17 +437,23 @@ export default {
           showDate: postDate,
           dataTicket: JSON.stringify(me.seatsSelecting),
           createdBy: me.$store.state.accountName,
-          roomCode: roomCode
-        });
+          roomCode: roomCode,
+        };
 
-      this.$api
-        .post("/Movie/UpdateSeatRoomCinema", me.seatsSelecting)
-        .then(() => {
-          me.$store.dispatch("showToast", "Đặt vé thành công!");
-          me.loadDataSeat(me.roomCinmeIDSelected);
-        });
+        this.$store.state.dataCheckout.seat = me.seatsSelecting;
+        this.$store.state.dataCheckout.ticket = {
+          normalCost: this.normalCost,
+          vipCost: this.vipCost,
+          totalAmount: this.totalAmountSelected,
+        };
 
-
+        localStorage.setItem(
+          "checkout",
+          JSON.stringify(this.$store.state.dataCheckout)
+        );
+        router.push("./create-payment");
+        this.$store.state.isOpenPopupSeat = false;
+      } 
     },
 
     closePopup() {
@@ -381,10 +477,10 @@ export default {
         })
         .then((data) => {
           if (data) {
-            me.$store.dispatch("showToast", "Xóa phòng thành công!");
+            me.$store.dispatch("showToast", this.$t("Deleteroomsuccessfully"));
             me.$store.state.isOpenPopupSeat = false;
           } else {
-            me.$store.dispatch("showToast", "Xóa phòng không thành công!");
+            me.$store.dispatch("showToast", this.$t("Roomdeletionfailed"));
           }
           me.$store.state.isShowLoading = false;
         });
@@ -394,6 +490,9 @@ export default {
 </script>
 <style lang="scss">
 .seatroom-manage {
+  .scrollbar-flex-content {
+    display: flex;
+  }
   position: fixed;
   top: 0;
   left: 0;
@@ -469,7 +568,8 @@ export default {
   }
 
   .seatroom-main {
-    height: calc(100vh - 230px);
+    height: calc(100vh - 240px);
+    overflow: auto;
     padding: 20px 200px;
     .screen-select-seat {
       .seat-container {
@@ -493,7 +593,7 @@ export default {
             cursor: pointer;
             &.selected {
               background: #cb0c9f !important;
-              opacity: 0.5;
+              opacity: 0.2;
               cursor: no-drop;
             }
 
@@ -566,7 +666,7 @@ export default {
 
       .color-selected {
         background: #cb0c9f !important;
-        opacity: 0.5;
+        opacity: 0.2;
       }
 
       .color-unselected {
@@ -609,13 +709,37 @@ export default {
       }
     }
 
+    .checkout-total {
+      -webkit-user-select: none;
+      user-select: none;
+      position: absolute;
+      left: 20px;
+      top: 80%;
+      width: 180px;
+      transform: translateY(-50%);
+      font-size: 12px;
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+      padding: 10px;
+      border-radius: 4px;
+      .note {
+        font-size: 14px;
+        color: #111;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .bold {
+        font-weight: 600;
+        color: #111;
+      }
+    }
+
     .user-select {
       -webkit-user-select: none;
       user-select: none;
       position: absolute;
       right: 20px;
-      top: 20%;
-      transform: translateY(-50%);
+      top: 29%;
+
       font-size: 12px;
       box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
       padding: 10px;
@@ -639,6 +763,13 @@ export default {
 
     .footer-right {
       display: flex;
+      .el-button--primary {
+        height: 36px;
+      }
+
+      .el-button {
+        font-weight: 600;
+      }
     }
     position: absolute;
     right: 0;

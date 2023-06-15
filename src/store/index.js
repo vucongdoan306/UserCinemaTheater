@@ -43,7 +43,14 @@ export default createStore({
     isShowAccountSetting: false,
     isShowPasswordSetting: false,
     isShowSetting: false,
-    isShowCommonSetting: false
+    isShowCommonSetting: false,
+    isOpenPopupDetailLanguage: false,
+    isShowCinemaSetting: false,
+    isShowCinemaInfoSetting: false,
+    customeNameCheckout: "",
+    phonenumberCheckout: "",
+    dataCheckout: {}
+    
   },
   mutations: {
     toggleConfigurator(state) {

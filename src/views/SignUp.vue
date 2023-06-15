@@ -43,6 +43,7 @@
                     :placeholder="$t('PhoneNumber')"
                     v-model="phoneNumber"
                     :isRequired="true"
+                    :maxlength="10"
                   />
                 </div>
                 <div class="mb-3">
@@ -73,7 +74,7 @@
                   <el-date-picker
                     v-model="dateOfBirth"
                     type="date"
-                    :placeholder="$t('PickADay')"
+                    :placeholder="$t('DateOfBirth')"
                     :size="size"
                   />
                 </div>

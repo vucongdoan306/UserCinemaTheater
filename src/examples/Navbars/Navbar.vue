@@ -70,7 +70,7 @@
           </li>
           <li
             class="px-3 nav-item d-flex align-items-center"
-            v-if="sessionStorage"
+            v-if="localStorage"
           >
             <a
               class="p-0 nav-link"
@@ -102,8 +102,8 @@ export default {
   },
   mounted() {
     let me = this;
-    if (jwt.decode(sessionStorage.getItem("token"))) {
-      this.fullName = jwt.decode(sessionStorage.getItem("token")).fullname;
+    if (jwt.decode(localStorage.getItem("token"))) {
+      this.fullName = jwt.decode(localStorage.getItem("token")).fullname;
     }
   },
   props: {
@@ -174,7 +174,7 @@ export default {
 
     async loadListCinema() {
       let me = this;
-      await this.$api.post("/Account/GetListCinema").then((data) => {
+      await this.$api.get("/Account/GetListCinema").then((data) => {
         me.listCinema = data;
       });
     },

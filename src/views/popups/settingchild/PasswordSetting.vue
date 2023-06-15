@@ -83,7 +83,7 @@ export default {
     loadData() {
       let me = this;
       this.$store.state.isShowLoading = true;
-      let token = sessionStorage.getItem("token");
+      let token = localStorage.getItem("token");
       let accountName = jwt.decode(token).name;
       this.$api
         .post("/Account/GetAccountByAccountName", {

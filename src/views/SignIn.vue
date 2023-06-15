@@ -125,7 +125,7 @@ export default {
           password: me.password,
         })
         .then((data) => {
-          sessionStorage.setItem("token", data.token);
+          localStorage.setItem("token", data.token);
           if(data.token){
             router.push("/");
           }
@@ -154,7 +154,7 @@ export default {
     this.$store.state.IsOutSide = true;
     body.classList.remove("bg-gray-100");
     this.$store.state.isLoggedIn = false;
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
   },
   beforeUnmount() {
     this.$store.state.hideConfigButton = false;

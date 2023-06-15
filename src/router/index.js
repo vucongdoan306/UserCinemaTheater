@@ -21,12 +21,14 @@ import RoomCinema from "@/views/SeatRoomCinema.vue";
 import CinemaRoom from "@/views/CinemaRoom.vue";
 import Account from "@/views/Account.vue";
 import DictionaryMovie from "@/views/DictionaryMovie.vue";
-
+import CheckoutVnpay from "@/views/vnpay/CheckoutVnPay.vue";
+import CheckoutFailed from "@/views/vnpay/CheckoutFailed.vue";
+import CheckoutSuccessfully from "@/views/vnpay/CheckoutSuccessfully.vue";
 const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "/movie-manage",
+    redirect: "/movie-list",
   },
   {
     path: "/dashboard",
@@ -69,7 +71,7 @@ const routes = [
     component: SignUp,
   },
   {
-    path: "/movie-manage",
+    path: "/movie-list",
     name: "Movie Manage",
     component: MovieManage,
   },
@@ -133,6 +135,23 @@ const routes = [
     name: "Dictionary",
 
   },
+  {
+    path: "/create-payment",
+    name: "Checkout Vnpay",
+    component: CheckoutVnpay,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/checkout-failed",
+    name: "Checkout Failed",
+    component: CheckoutFailed,
+  },
+  {
+    path: "/checkout-success",
+    name: "Checkout Success",
+    component: CheckoutSuccessfully,
+  },
+  { path: '/:pathMatch(.*)*', redirect: "/movie-manage"},
 ];
 
 const router = createRouter({
@@ -142,7 +161,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(from);
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!isLoggedIn() || !store.state.isLoggedIn) {
       next({
@@ -159,10 +177,10 @@ router.beforeEach((to, from, next) => {
 
 // Hàm check login với token
 function isLoggedIn() {
-  const token = sessionStorage.getItem("token");
+  const token = localStorage.getItem("token");
   store.state.isLoggedIn = true;
 
-  // Kiểm tra xem token đã được lưu trong sessionStorage chưa
+  // Kiểm tra xem token đã được lưu trong localStorage chưa
   if (token) {
     // Giải mã token để kiểm tra tính hợp lệ của nó
     const decodedToken = jwt.decode(token);
@@ -172,22 +190,22 @@ function isLoggedIn() {
     // Kiểm tra xem token có hết hạn hay không
     const expirationDate = new Date(decodedToken.exp * 1000);
     if (expirationDate <= new Date()) {
-      // Nếu token đã hết hạn, xóa nó khỏi sessionStorage và trả về false
-      sessionStorage.removeItem("token");
+      // Nếu token đã hết hạn, xóa nó khỏi localStorage và trả về false
+      localStorage.removeItem("token");
       return false;
     } else {
       // Nếu token hợp lệ, trả về true
       return true;
     }
   } else {
-    // Nếu token không tồn tại trong sessionStorage, trả về false
+    // Nếu token không tồn tại trong localStorage, trả về false
     return false;
   }
 }
 
 // Hàm check role
 function requireAdmin(to, from, next) {
-  const token = sessionStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   if (!isLoggedIn(token)) {
     next("/sign-in");
