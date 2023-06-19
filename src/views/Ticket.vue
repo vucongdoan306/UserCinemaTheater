@@ -112,7 +112,7 @@ export default {
     let me = this;
     this.$store.state.isShowLoading = true;
 
-    this.$api.post("/Ticket/GetListTemplateTicket").then((data) => {
+    this.$api.post("/Ticket/GetListTemplateTicket",{keyword: null}).then((data) => {
       me.listTicket = data;
       this.$store.state.isShowLoading = false;
     });
@@ -168,7 +168,7 @@ export default {
       let me = this;
       this.$store.state.isShowLoading = true;
 
-      this.$api.post("/Ticket/GetListTemplateTicket").then((data) => {
+      this.$api.post("/Ticket/GetListTemplateTicket", {keyword: null}).then((data) => {
         me.listTicket = data;
         this.$store.state.isShowLoading = false;
       });

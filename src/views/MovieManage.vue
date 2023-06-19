@@ -116,13 +116,6 @@
                     {{ $t("nShowDate") }}:
                     {{ convertDateFormat(item.fromDate) }}
                   </div>
-                  <div class="movie-to-date">
-                    {{ $t("nEndDate") }}: {{ convertDateFormat(item.toDate) }}
-                  </div>
-                  <div class="movie-release-date">
-                    {{ $t("Releasedate") }}:
-                    {{ convertDateFormat(item.releaseDate) }}
-                  </div>
                   <el-tooltip
                     class="box-item"
                     effect="dark"
